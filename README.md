@@ -23,7 +23,7 @@ This template is compatible with the latest **stable** version of Android Studio
 1. Clone this branch
 
 ```
-git clone https://github.com/android/architecture-templates.git --branch base
+git clone https://github.com/hirokuma/hk-architecture-templates.git --branch hk/agp-8.6 [project_dir_name]
 ```
 
 2. Run the customizer script:
@@ -33,7 +33,8 @@ git clone https://github.com/android/architecture-templates.git --branch base
 ```
 
 Where `your.package.name` is your app ID (should be lowercase) and `DataItemType` is used for the
-name of the screen, exposed state and data base entity (should be PascalCase). You can add an optional application name.
+name of the screen(`"DataItemType"Screen` and `"DataItemType"ViewModel`), 
+exposed state and data base entity (should be PascalCase). You can add an optional application name.
 
 # License
 
