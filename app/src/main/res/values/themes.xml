@@ -17,5 +17,5 @@
 
 <resources>
 
-    <style name="Theme.MyApplication" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.BleApplication" parent="android:Theme.Material.Light.NoActionBar" />
 </resources>
