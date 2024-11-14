@@ -15,5 +15,11 @@
   -->
 
 <resources>
-    <string name="app_name">MyApplication</string>
+    <string name="app_name">MyBLEApplication</string>
+    <string name="bluetooth_alert_title">Bluetooth is not enabled</string>
+    <string name="bluetooth_alert_text">Please enable Bluetooth before launching this app.</string>
+    <string name="permission_setting_button">Change permissions\n(Go to Settings app)</string>
+    <string name="scan_button">scan</string>
+    <string name="scanning_button">scanning…</string>
+    <string name="back_button">back</string>
 </resources>

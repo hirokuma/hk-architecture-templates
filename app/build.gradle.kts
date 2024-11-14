@@ -113,6 +113,8 @@ dependencies {
     // Instrumented tests
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    // Permissions
+    implementation(libs.accompanist.permissions)
 
     // Local tests: jUnit, coroutines, Android runner
     testImplementation(libs.junit)

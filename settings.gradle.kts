@@ -28,6 +28,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "MyApplication"
+rootProject.name = "MyBLEApplication"
 
 include(":app")

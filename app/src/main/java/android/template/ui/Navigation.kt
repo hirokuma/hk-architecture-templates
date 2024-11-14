@@ -16,21 +16,54 @@
 
 package android.template.ui
 
+import android.template.ui.screens.BleViewModel
+import android.template.ui.screens.CheckPermissionsScreen
+import android.template.ui.screens.ConnectedScreen
+import android.template.ui.screens.ScanScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import android.template.ui.mymodel.MyModelScreen
+
+enum class NavRoute {
+    CheckPermissions,
+    Scan,
+    Connected,
+}
 
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
-
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MyModelScreen(modifier = Modifier.padding(16.dp)) }
-        // TODO: Add more destinations
+    val viewModel: BleViewModel = hiltViewModel()
+    NavHost(navController = navController, startDestination = NavRoute.CheckPermissions.name) {
+        composable(NavRoute.CheckPermissions.name) {
+            CheckPermissionsScreen(
+                onCheckPassed = {
+                    navController.navigate(NavRoute.Scan.name) {
+                        popUpTo(NavRoute.CheckPermissions.name) { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(NavRoute.Scan.name) {
+            ScanScreen(
+                viewModel,
+                onItemClicked = {
+                    navController.navigate(NavRoute.Connected.name)
+                },
+                modifier = Modifier.padding(16.dp))
+        }
+        composable(NavRoute.Connected.name) {
+            ConnectedScreen(
+                viewModel,
+                onBackButtonClicked = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier.padding(16.dp))
+        }
     }
 }
