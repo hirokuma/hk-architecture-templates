@@ -29,12 +29,10 @@ git clone https://github.com/hirokuma/hk-architecture-templates.git --branch hk/
 2. Run the customizer script:
 
 ```
-./customizer.sh your.package.name DataItemType [MyApplication]
+./customizer.sh your.package.name
 ```
 
-Where `your.package.name` is your app ID (should be lowercase) and `DataItemType` is used for the
-name of the screen(`"DataItemType"Screen` and `"DataItemType"ViewModel`), 
-exposed state and data base entity (should be PascalCase). You can add an optional application name.
+Where `your.package.name` is your app ID (should be lowercase).
 
 # License
 
