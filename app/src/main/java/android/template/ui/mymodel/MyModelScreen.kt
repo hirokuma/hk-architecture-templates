@@ -40,13 +40,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun MyModelScreen(modifier: Modifier = Modifier, viewModel: MyModelViewModel = hiltViewModel()) {
     val items by viewModel.uiState.collectAsStateWithLifecycle()
-    if (items is MyModelUiState.Success) {
-        MyModelScreen(
-            items = (items as MyModelUiState.Success).data,
-            onSave = viewModel::addMyModel,
-            modifier = modifier
-        )
-    }
+    MyModelScreen(
+        items = listOf("aaa", "bbb"),
+        onSave = { _ -> },
+        modifier = modifier
+    )
 }
 
 @Composable

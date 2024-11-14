@@ -16,40 +16,31 @@
 
 package android.template.ui.mymodel
 
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.le.ScanRecord
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import android.template.data.MyModelRepository
-import android.template.ui.mymodel.MyModelUiState.Error
-import android.template.ui.mymodel.MyModelUiState.Loading
-import android.template.ui.mymodel.MyModelUiState.Success
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class MyModelViewModel @Inject constructor(
-    private val myModelRepository: MyModelRepository
-) : ViewModel() {
-
-    val uiState: StateFlow<MyModelUiState> = myModelRepository
-        .myModels.map<List<String>, MyModelUiState>(::Success)
-        .catch { emit(Error(it)) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), Loading)
-
-    fun addMyModel(name: String) {
-        viewModelScope.launch {
-            myModelRepository.add(name)
-        }
-    }
+class MyModelViewModel @Inject constructor() : ViewModel() {
+    private val _uiState = MutableStateFlow(ScanUiState())
+    val uiState: StateFlow<ScanUiState> = _uiState.asStateFlow()
 }
 
-sealed interface MyModelUiState {
-    object Loading : MyModelUiState
-    data class Error(val throwable: Throwable) : MyModelUiState
-    data class Success(val data: List<String>) : MyModelUiState
-}
+data class ScanUiState(
+    val deviceList: List<Device> = emptyList(),
+    val scanning: Boolean = false,
+    val selectedDevice: Device? = null,
+)
+
+data class Device(
+    val name: String = "",
+    val address: String = "",
+    val ssid: Int = 0,
+    val device: BluetoothDevice? = null,
+    val scanRecord: ScanRecord? = null,
+)
