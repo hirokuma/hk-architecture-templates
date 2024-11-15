@@ -16,6 +16,7 @@
 
 package android.template.ui
 
+import android.template.ble.LbsService
 import android.template.ui.screens.BleViewModel
 import android.template.ui.screens.CheckPermissionsScreen
 import android.template.ui.screens.ConnectedScreen
@@ -23,8 +24,8 @@ import android.template.ui.screens.ScanScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -38,7 +39,13 @@ enum class NavRoute {
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
-    val viewModel: BleViewModel = hiltViewModel()
+
+    val lbsService = LbsService()
+    val services = mapOf(
+        lbsService.serviceUuid to lbsService
+    )
+    val viewModel = BleViewModel(LocalContext.current.applicationContext, services)
+
     NavHost(navController = navController, startDestination = NavRoute.CheckPermissions.name) {
         composable(NavRoute.CheckPermissions.name) {
             CheckPermissionsScreen(
@@ -60,7 +67,8 @@ fun MainNavigation() {
         composable(NavRoute.Connected.name) {
             ConnectedScreen(
                 viewModel,
-                onBackButtonClicked = {
+                services,
+                goToBack = {
                     navController.popBackStack()
                 },
                 modifier = Modifier.padding(16.dp))

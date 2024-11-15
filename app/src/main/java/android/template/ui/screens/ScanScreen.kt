@@ -88,7 +88,13 @@ fun ScanScreen(
             BottomAppBar(
                 containerColor = containerColor,
                 contentColor = contentColor,
-                modifier = Modifier.clickable(onClick = { viewModel.startDeviceScan() }),
+                modifier = Modifier.clickable(onClick = {
+                    if (!uiState.scanning) {
+                        viewModel.startDeviceScan()
+                    } else {
+                        viewModel.stopDeviceScan()
+                    }
+                }),
             ) {
                 Text(
                     text = stringResource(buttonId),
