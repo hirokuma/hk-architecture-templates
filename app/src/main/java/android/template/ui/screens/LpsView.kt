@@ -1,84 +1,75 @@
 package android.template.ui.screens
 
 import android.template.ble.BleServiceBase
-import android.template.ble.LbsService
+import android.template.ble.LpsService
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.util.UUID
 
 @Composable
-fun LbsView(
+fun LpsView(
     @Suppress("UNUSED_PARAMETER") uiState: UiState,
     services: Map<UUID, BleServiceBase>
 ) {
-    val service = services[LbsService.SERVICE_UUID]!! as LbsService
-    val lbsState by service.buttonState.collectAsState()
+    val service = services[LpsService.SERVICE_UUID]!! as LpsService
+    var text by remember { mutableStateOf("") }
 
     Column(modifier = Modifier) {
         Text(
-            text = "LBS Service",
+            text = "LPS Service",
             fontSize = 32.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    colorScheme.tertiaryContainer)
+                    colorScheme.tertiaryContainer
+                )
         )
         Text(
-            text = "LED",
+            text = "Print",
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(colorScheme.primaryContainer)
         )
-        Row(
-            horizontalArrangement = Arrangement.SpaceAround,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
+        Row {
+            TextField(
+                value = text,
+                onValueChange = {
+                    if (it.length < 12) {
+                        text = it
+                    }
+                }
+            )
             Button(
-                onClick = { service.setLed(true) }
+                onClick = { service.sendText(text) }
             ) {
-                Text("ON")
-            }
-            Button(
-                onClick = { service.setLed(false) }
-            ) {
-                Text("OFF")
+                Text("Send")
             }
         }
-
-        Spacer(Modifier.height(16.dp))
-
         Text(
-            text = "Button",
+            text = "Clear",
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(colorScheme.primaryContainer)
         )
-        Text(
-            text = "$lbsState",
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+        Button(
+            onClick = { service.clearText() }
+        ) {
+            Text("Clear")
+        }
     }
 }

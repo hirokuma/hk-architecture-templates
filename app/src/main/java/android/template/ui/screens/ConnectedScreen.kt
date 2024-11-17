@@ -3,6 +3,7 @@ package android.template.ui.screens
 import android.template.R
 import android.template.ble.BleServiceBase
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -49,7 +50,7 @@ fun ConnectedScreen(
                 containerColor = colorScheme.primary,
                 contentColor = colorScheme.onPrimary,
                 modifier = Modifier.clickable(onClick = {
-                    // 切断により自動で前の画面に戻る
+                    // Automatically transfer to previous screen upon BLE disconnection
                     viewModel.disconnectDevice()
                 }),
             ) {
@@ -70,10 +71,14 @@ fun ConnectedScreen(
             color = colorScheme.background,
             contentColor = colorScheme.onBackground,
         ) {
-            LbsView(uiState, services)
+            Column {
+                // TODO Add service view
+                LbsView(uiState, services)
+                LpsView(uiState, services)
+            }
         }
     }
-    // 切断による画面遷移
+    // Transfer to ScanScreen for BLE disconnection
     if (uiState.selectedDevice == null) {
         goToBack()
     }

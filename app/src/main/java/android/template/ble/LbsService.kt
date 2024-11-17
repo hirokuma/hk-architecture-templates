@@ -32,8 +32,8 @@ class LbsService: BleServiceBase {
             bleGatt = gatt
 
             // Notify有効
-//            val buttonChas = BleUtils.getCharacteristic(service, BUTTON_CHARACTERISTIC_UUID)
-//            BleUtils.writeDescriptor(gatt, buttonChas, CCCD_UUID, BleUtils.SubscribeType.Indication)
+            val buttonChas = BleUtils.getCharacteristic(service, BUTTON_CHARACTERISTIC_UUID)
+            BleUtils.writeDescriptor(gatt, buttonChas, CCCD_UUID, BleUtils.SubscribeType.Notification)
 
             Log.d(TAG, "onServicesDiscovered: done")
 
@@ -65,7 +65,6 @@ class LbsService: BleServiceBase {
         }
     }
 
-    @SuppressLint("MissingPermission")
     fun setLed(onoff: Boolean) {
         Log.d(TAG, "setLed: $onoff")
         val service = BleUtils.getService(bleGatt, SERVICE_UUID)
