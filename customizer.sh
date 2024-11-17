@@ -25,7 +25,7 @@ fi
 # exit when any command fails
 set -e
 
-if [[ $# -lt 3 ]]; then
+if [[ $# -lt 2 ]]; then
    echo "Usage: bash customizer.sh my.new.package AppName" >&2
    exit 2
 fi
