@@ -2,6 +2,7 @@ package android.template.ui.screens
 
 import android.template.R
 import android.template.ble.BleServiceBase
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -81,5 +82,8 @@ fun ConnectedScreen(
     // Transfer to ScanScreen for BLE disconnection
     if (uiState.selectedDevice == null) {
         goToBack()
+    }
+    BackHandler {
+        viewModel.disconnectDevice()
     }
 }
