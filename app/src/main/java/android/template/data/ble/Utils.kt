@@ -98,6 +98,12 @@ object Utils {
             0x0f -> "GATT_INSUF_ENCRYPTION"
             0x10 -> "GATT_UNSUPPORT_GRP_TYPE"
             0x11 -> "GATT_INSUF_RESOURCE"
+            //
+            0x13 -> "HCI:connection terminate by peer user"
+            0x16 -> "HCI:connectionterminated by local host"
+            0x3e -> "HCI:connection fail to establish"
+            0x22 -> "HCI:connection fail for LMP response tout"
+            //
             0x87 -> "GATT_ILLEGAL_PARAMETER"
             0x80 -> "GATT_NO_RESOURCES"
             0x81 -> "GATT_INTERNAL_ERROR"
@@ -111,7 +117,9 @@ object Utils {
             0x8a -> "GATT_MORE"
             0x8b -> "GATT_INVALID_CFG"
             0x8c -> "GATT_SERVICE_STARTED"
-            else -> "unknown error code"
+            //
+            0x100 -> "L2CAP: connection cancelled"
+            else -> "unknown error code($code)"
         }
     }
 }
