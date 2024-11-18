@@ -1,4 +1,4 @@
-package android.template.ble
+package android.template.data.ble
 
 import java.util.UUID
 

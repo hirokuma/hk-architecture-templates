@@ -1,4 +1,4 @@
-package android.template.ble
+package android.template.data.ble
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothGatt
@@ -13,7 +13,7 @@ import java.util.UUID
 
 private const val TAG = "BleUtils"
 
-object BleUtils {
+object Utils {
     fun isBluetoothEnabled(context: Context): Boolean {
         val bluetoothManager = context.getSystemService(BluetoothManager::class.java)
         val bluetoothAdapter = bluetoothManager.adapter

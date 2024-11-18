@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.template.R
-import android.template.ble.BleUtils.isBluetoothEnabled
+import android.template.data.ble.Utils.isBluetoothEnabled
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

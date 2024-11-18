@@ -18,6 +18,7 @@ package android.template.ui.screens
 
 import android.content.res.Configuration
 import android.template.R
+import android.template.data.ble.Device
 import android.template.ui.theme.AppTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable

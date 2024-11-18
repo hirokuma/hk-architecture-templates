@@ -1,7 +1,7 @@
 package android.template.ui.screens
 
 import android.template.R
-import android.template.ble.BleServiceBase
+import android.template.data.ble.BleServiceBase
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

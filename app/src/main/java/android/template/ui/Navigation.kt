@@ -16,8 +16,8 @@
 
 package android.template.ui
 
-import android.template.ble.LbsService
-import android.template.ble.LpsService
+import android.template.data.ble.LbsService
+import android.template.data.ble.LpsService
 import android.template.ui.screens.BleViewModel
 import android.template.ui.screens.CheckPermissionsScreen
 import android.template.ui.screens.ConnectedScreen

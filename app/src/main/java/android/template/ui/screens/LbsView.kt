@@ -1,7 +1,7 @@
 package android.template.ui.screens
 
-import android.template.ble.BleServiceBase
-import android.template.ble.LbsService
+import android.template.data.ble.BleServiceBase
+import android.template.data.ble.LbsService
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -17,28 +17,28 @@
 package android.template.ui.screens
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
-import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
-import android.bluetooth.le.BluetoothLeScanner
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanRecord
-import android.bluetooth.le.ScanResult
 import android.content.Context
-import android.template.ble.BleServiceBase
-import android.template.ble.BleServiceCallback
-import android.template.ble.BleUtils
+import android.template.data.ble.BleScan
+import android.template.data.ble.BleServiceBase
+import android.template.data.ble.Device
+import android.template.data.ble.Utils
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 private const val TAG = "BleViewModel"
@@ -47,12 +47,8 @@ class BleViewModel(
     @ApplicationContext private val context: Context,
     private val services: Map<UUID, BleServiceBase>
 ) : ViewModel() {
-    private val bluetoothLeScanner: BluetoothLeScanner
-    init {
-        val bluetoothManager = context.getSystemService(BluetoothManager::class.java)
-        val bluetoothAdapter = bluetoothManager.adapter
-        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
-    }
+    private val bleScan = BleScan(context)
+    private var bleScanJob: Job? = null
 
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
@@ -72,28 +68,6 @@ class BleViewModel(
         }
     }
 
-    private val scanCallback: ScanCallback = object : ScanCallback() {
-        override fun onScanResult(callbackType: Int, result: ScanResult) {
-            super.onScanResult(callbackType, result)
-            Log.d(TAG, "onScanResult: ${result.device}")
-            val record = result.scanRecord ?: return
-            Log.d(TAG, "ScanRecord: $result.scanRecord}")
-            if (record.deviceName == null) {
-                return
-            }
-            addDevice(
-                Device(
-                    address = result.device.address,
-                    name = record.deviceName!!,
-                    ssid = result.rssi,
-                    device = result.device,
-                    scanRecord = record
-                )
-            )
-        }
-    }
-
-    @SuppressLint("MissingPermission")
     fun startDeviceScan() {
         if (!_uiState.value.scanning) {
             _uiState.update {
@@ -103,7 +77,12 @@ class BleViewModel(
                 )
             }
             Log.d(TAG, "onClickScan: start searching")
-            bluetoothLeScanner.startScan(scanCallback)
+            bleScanJob = viewModelScope.launch(Dispatchers.IO) {
+                val scanFlow = bleScan.startScan()
+                scanFlow.buffer().collect {
+                    addDevice(it)
+                }
+            }
         } else {
             _uiState.update {
                 it.copy(scanning = false)
@@ -119,7 +98,7 @@ class BleViewModel(
             return false
         }
         try {
-            bluetoothLeScanner.stopScan(scanCallback)
+            bleScan.stopScan()
             _uiState.update {
                 it.copy(scanning = false)
             }
@@ -143,7 +122,7 @@ class BleViewModel(
                     return
                 }
                 if (status != BluetoothGatt.GATT_SUCCESS) {
-                    Log.e(TAG, "onConnectionStateChange: not success(status=${BleUtils.convertErrorStatus(status)})")
+                    Log.e(TAG, "onConnectionStateChange: not success(status=${Utils.convertErrorStatus(status)})")
                     disconnectDevice(gatt)
                     return
                 }
@@ -171,7 +150,7 @@ class BleViewModel(
                     return
                 }
                 if (status != BluetoothGatt.GATT_SUCCESS) {
-                    Log.e(TAG, "onServicesDiscovered: failed(status=${BleUtils.convertErrorStatus(status)})")
+                    Log.e(TAG, "onServicesDiscovered: failed(status=${Utils.convertErrorStatus(status)})")
                     gatt.disconnect()
                     return
                 }
@@ -372,10 +351,3 @@ data class UiState(
     val selectedDevice: Device? = null,
 )
 
-data class Device(
-    val name: String = "",
-    val address: String = "",
-    val ssid: Int = 0,
-    val device: BluetoothDevice? = null,
-    val scanRecord: ScanRecord? = null,
-)
