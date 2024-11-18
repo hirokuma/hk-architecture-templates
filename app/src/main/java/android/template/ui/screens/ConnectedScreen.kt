@@ -1,7 +1,7 @@
 package android.template.ui.screens
 
 import android.template.R
-import android.template.data.ble.BleServiceBase
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,17 +22,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import java.util.UUID
+
+private const val TAG = "ConnectedScreen"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConnectedScreen(
     viewModel: BleViewModel,
-    services: Map<UUID, BleServiceBase>,
     goToBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val disconnectState by viewModel.disconnectState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -74,16 +75,18 @@ fun ConnectedScreen(
         ) {
             Column {
                 // TODO Add service view
-                LbsView(uiState, services)
-                LpsView(uiState, services)
+                LbsView(uiState, viewModel.services)
+                LpsView(uiState, viewModel.services)
             }
         }
     }
     // Transfer to ScanScreen for BLE disconnection
-    if (uiState.selectedDevice == null) {
+    if (disconnectState) {
+        Log.d(TAG, "detect disconnect")
         goToBack()
     }
     BackHandler {
+        Log.d(TAG, "BackHandler")
         viewModel.disconnectDevice()
     }
 }

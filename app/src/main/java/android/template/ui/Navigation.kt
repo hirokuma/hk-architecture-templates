@@ -16,8 +16,6 @@
 
 package android.template.ui
 
-import android.template.data.ble.LbsService
-import android.template.data.ble.LpsService
 import android.template.ui.screens.BleViewModel
 import android.template.ui.screens.CheckPermissionsScreen
 import android.template.ui.screens.ConnectedScreen
@@ -40,16 +38,7 @@ enum class NavRoute {
 @Composable
 fun MainNavigation() {
     val navController = rememberNavController()
-
-    // TODO Add BLE service classes
-    val lbsService = LbsService()
-    val lpsService = LpsService()
-    val services = mapOf(
-        lbsService.serviceUuid to lbsService,
-        lpsService.serviceUuid to lpsService,
-    )
-
-    val viewModel = BleViewModel(LocalContext.current.applicationContext, services)
+    val viewModel = BleViewModel(LocalContext.current.applicationContext)
 
     NavHost(navController = navController, startDestination = NavRoute.CheckPermissions.name) {
         composable(NavRoute.CheckPermissions.name) {
@@ -72,7 +61,6 @@ fun MainNavigation() {
         composable(NavRoute.Connected.name) {
             ConnectedScreen(
                 viewModel,
-                services,
                 goToBack = {
                     navController.popBackStack()
                 },
