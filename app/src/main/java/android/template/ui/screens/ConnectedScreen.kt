@@ -33,7 +33,6 @@ fun ConnectedScreen(
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val disconnectState by viewModel.disconnectState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -52,7 +51,6 @@ fun ConnectedScreen(
                 containerColor = colorScheme.primary,
                 contentColor = colorScheme.onPrimary,
                 modifier = Modifier.clickable(onClick = {
-                    // Automatically transfer to previous screen upon BLE disconnection
                     viewModel.disconnectDevice()
                 }),
             ) {
@@ -81,7 +79,7 @@ fun ConnectedScreen(
         }
     }
     // Transfer to ScanScreen for BLE disconnection
-    if (disconnectState) {
+    if (uiState.selectedDevice == null) {
         Log.d(TAG, "detect disconnect")
         goToBack()
     }

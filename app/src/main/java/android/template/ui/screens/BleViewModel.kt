@@ -43,8 +43,6 @@ class BleViewModel(
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    val disconnectState = bleConn.disconnectState
-
     private fun addDevice(device: BleDevice) {
         // TODO 既に同じアドレスのデバイスがあるなら内容を置き換えるべき
         if (_uiState.value.deviceList.find { it.address == device.address } != null) {
@@ -100,12 +98,21 @@ class BleViewModel(
         return true
     }
 
-    fun connectDevice(device: BleDevice) {
-        bleConn.connectDevice(device)
-        _uiState.update { state ->
-            state.copy(
-                selectedDevice = device,
-            )
+    suspend fun connectDevice(device: BleDevice) {
+        bleConn.connectDevice(device).collect {
+            if (it) {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedDevice = device,
+                    )
+                }
+            } else {
+                _uiState.update { state ->
+                    state.copy(
+                        selectedDevice = null,
+                    )
+                }
+            }
         }
     }
 

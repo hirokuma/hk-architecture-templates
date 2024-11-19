@@ -51,12 +51,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScanScreen(
     viewModel: BleViewModel,
-    onItemClicked: (device: BleDevice) -> Unit,
+    onDeviceConnected: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -117,11 +120,16 @@ fun ScanScreen(
                 modifier = Modifier.padding(innerPadding),
                 scanning = uiState.scanning,
                 onItemClicked = {device ->
-                    viewModel.connectDevice(device)
-                    onItemClicked(device)
+                    viewModel.viewModelScope.launch(Dispatchers.IO) {
+                        viewModel.connectDevice(device)
+                    }
                 },
             )
         }
+    }
+    // Transfer to ConnectedScreen for BLE connection
+    if (uiState.selectedDevice != null) {
+        onDeviceConnected()
     }
 }
 

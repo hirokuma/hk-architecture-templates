@@ -53,7 +53,7 @@ fun MainNavigation() {
         composable(NavRoute.Scan.name) {
             ScanScreen(
                 viewModel,
-                onItemClicked = {
+                onDeviceConnected = {
                     navController.navigate(NavRoute.Connected.name)
                 },
                 modifier = Modifier.padding(16.dp))

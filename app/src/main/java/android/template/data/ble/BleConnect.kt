@@ -9,10 +9,9 @@ import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 
 private const val TAG = "BleConnect"
 
@@ -20,9 +19,6 @@ class BleConnect(
     @ApplicationContext private val context: Context
 ) {
     private var bleGatt: BluetoothGatt? = null
-
-    private val _disconnectState = MutableStateFlow(false)
-    val disconnectState: StateFlow<Boolean> = _disconnectState.asStateFlow()
 
     // TODO Add BLE service classes
     private val lbsService = LbsService()
@@ -34,8 +30,7 @@ class BleConnect(
 
     @OptIn(ExperimentalStdlibApi::class)
     @SuppressLint("MissingPermission")
-    fun connectDevice(device: BleDevice) {
-        _disconnectState.update { false }
+    fun connectDevice(device: BleDevice): Flow<Boolean> = callbackFlow {
         val callback = object: BluetoothGattCallback() {
             override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
                 super.onConnectionStateChange(gatt, status, newState)
@@ -49,19 +44,27 @@ class BleConnect(
                     disconnectDevice(gatt)
                     return
                 }
-                when (newState) {
+                val conn = when (newState) {
                     BluetoothProfile.STATE_CONNECTED -> {
                         Log.d(TAG, "onConnectionStateChange: connected!")
                         gatt.discoverServices()
+                        true
                     }
                     BluetoothGatt.STATE_DISCONNECTED -> {
                         Log.d(TAG, "onConnectionStateChange: disconnected!")
                         disconnectDevice(gatt)
+                        false
                     }
                     else -> {
                         Log.e(TAG, "onConnectionStateChange: unknown state($newState)")
                         disconnectDevice(gatt)
+                        false
                     }
+                }
+                try {
+                    trySend(conn)
+                } catch (e: Exception) {
+                    Log.e(TAG, "fail trySend: $e")
                 }
             }
 
@@ -240,6 +243,11 @@ class BleConnect(
             }
         }
         bleGatt = device.device?.connectGatt(context, false, callback)
+
+        awaitClose {
+            Log.d(TAG, "awaitClose")
+            disconnectDevice(bleGatt)
+        }
     }
 
 
@@ -255,7 +263,6 @@ class BleConnect(
         }
         bleGatt!!.disconnect()
         bleGatt = null
-        _disconnectState.update { true }
         Log.d(TAG, "BLE disconnect")
     }
 }
