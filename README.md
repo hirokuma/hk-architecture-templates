@@ -40,7 +40,7 @@ Where `your.package.name` is your app ID (should be lowercase).
 2. Implement `XxxService` by referring to `BleServiceBase.kt`
 3. Remove files
   * `your/package/name`
-    * `ble/`
+    * `data/ble/`
       * `LbsService.kt`
       * `LpsService`
     * `ui/screens/`
@@ -48,7 +48,7 @@ Where `your.package.name` is your app ID (should be lowercase).
       * `LpsView.kt`
 4. Create `your/package/name/screens/XxxView.kt` and implement UI components
 5. Edit implementation
-  * `your/package/name/ui/Navigation.kt`
+  * `your/package/name/data/ble/BleConnect.kt`
     * Find `// TODO Add BLE service classes`
       * add your Service class instance
       * add `services` map
