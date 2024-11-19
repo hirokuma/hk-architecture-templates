@@ -34,7 +34,7 @@ class BleConnect(
 
     @OptIn(ExperimentalStdlibApi::class)
     @SuppressLint("MissingPermission")
-    fun connectDevice(device: Device) {
+    fun connectDevice(device: BleDevice) {
         _disconnectState.update { false }
         val callback = object: BluetoothGattCallback() {
             override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {

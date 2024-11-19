@@ -18,7 +18,7 @@ package android.template.ui.screens
 
 import android.content.res.Configuration
 import android.template.R
-import android.template.data.ble.Device
+import android.template.data.ble.BleDevice
 import android.template.ui.theme.AppTheme
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -56,7 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun ScanScreen(
     viewModel: BleViewModel,
-    onItemClicked: (device: Device) -> Unit,
+    onItemClicked: (device: BleDevice) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -128,10 +128,10 @@ fun ScanScreen(
 
 @Composable
 fun DeviceList(
-    deviceList: List<Device>,
+    deviceList: List<BleDevice>,
     modifier: Modifier = Modifier,
     scanning: Boolean,
-    onItemClicked: (Device) -> Unit,
+    onItemClicked: (BleDevice) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -172,8 +172,8 @@ fun DeviceList(
 @Composable
 fun DeviceListPreview() {
     val list = listOf(
-        Device("dummy1", "00:11:22:33:44:55", -10),
-        Device("dummy2", "66:77:88:99:aa:bb", -20)
+        BleDevice("dummy1", "00:11:22:33:44:55", -10),
+        BleDevice("dummy2", "66:77:88:99:aa:bb", -20)
     )
     AppTheme(dynamicColor = false) {
         Surface(

@@ -26,7 +26,7 @@ class BleScan(
 
     private var scanCallback: ScanCallback? = null
     @SuppressLint("MissingPermission")
-    fun startScan(): Flow<Device> = callbackFlow {
+    fun startScan(): Flow<BleDevice> = callbackFlow {
         scanCallback = object : ScanCallback() {
             override fun onScanResult(callbackType: Int, result: ScanResult) {
                 super.onScanResult(callbackType, result)
@@ -35,7 +35,7 @@ class BleScan(
                 if (record.deviceName == null) {
                     return
                 }
-                val dev = Device(
+                val dev = BleDevice(
                     address = result.device.address,
                     name = record.deviceName!!,
                     ssid = result.rssi,

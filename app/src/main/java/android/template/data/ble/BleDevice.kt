@@ -3,7 +3,7 @@ package android.template.data.ble
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.le.ScanRecord
 
-data class Device(
+data class BleDevice(
     val name: String = "",
     val address: String = "",
     val ssid: Int = 0,

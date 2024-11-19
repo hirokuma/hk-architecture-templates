@@ -18,18 +18,16 @@ package android.template.ui.screens
 
 import android.content.Context
 import android.template.data.ble.BleConnect
+import android.template.data.ble.BleDevice
 import android.template.data.ble.BleScan
-import android.template.data.ble.Device
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -39,7 +37,6 @@ class BleViewModel(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val bleScan = BleScan(context)
-    private var bleScanJob: Job? = null
     private val bleConn = BleConnect(context)
     val services = bleConn.services
 
@@ -48,7 +45,8 @@ class BleViewModel(
 
     val disconnectState = bleConn.disconnectState
 
-    private fun addDevice(device: Device) {
+    private fun addDevice(device: BleDevice) {
+        // TODO 既に同じアドレスのデバイスがあるなら内容を置き換えるべき
         if (_uiState.value.deviceList.find { it.address == device.address } != null) {
             return
         }
@@ -70,10 +68,9 @@ class BleViewModel(
                 )
             }
             Log.d(TAG, "onClickScan: start searching")
-            bleScanJob = viewModelScope.launch(Dispatchers.IO) {
-                val scanFlow = bleScan.startScan()
-                scanFlow.buffer().collect {
-                    addDevice(it)
+            viewModelScope.launch(Dispatchers.IO) {
+                bleScan.startScan().collect { dev ->
+                    addDevice(dev)
                 }
             }
         } else {
@@ -103,7 +100,7 @@ class BleViewModel(
         return true
     }
 
-    fun connectDevice(device: Device) {
+    fun connectDevice(device: BleDevice) {
         bleConn.connectDevice(device)
         _uiState.update { state ->
             state.copy(
@@ -118,8 +115,8 @@ class BleViewModel(
 }
 
 data class UiState(
-    val deviceList: List<Device> = emptyList(),
+    val deviceList: List<BleDevice> = emptyList(),
     val scanning: Boolean = false,
-    val selectedDevice: Device? = null,
+    val selectedDevice: BleDevice? = null,
 )
 
