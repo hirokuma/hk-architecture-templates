@@ -18,11 +18,11 @@ private const val TAG = "BleConnect"
 class BleConnect(
     @ApplicationContext private val context: Context
 ) {
-    private var bleGatt: BluetoothGatt? = null
+    internal var bleGatt: BluetoothGatt? = null
 
     // TODO Add BLE service classes
-    private val lbsService = LbsService()
-    private val lpsService = LpsService()
+    private val lbsService = LbsService(this)
+    private val lpsService = LpsService(this)
     val services = mapOf(
         lbsService.serviceUuid to lbsService,
         lpsService.serviceUuid to lpsService,

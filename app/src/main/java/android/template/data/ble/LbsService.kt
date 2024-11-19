@@ -12,10 +12,8 @@ import java.util.UUID
 
 private const val TAG = "LbsControl"
 
-class LbsService: BleServiceBase {
+class LbsService(private val bleConnect: BleConnect): BleServiceBase {
     override val serviceUuid = SERVICE_UUID
-
-    private lateinit var bleGatt: BluetoothGatt
 
     private val _buttonState = MutableStateFlow(false)
     val buttonState: StateFlow<Boolean> = _buttonState.asStateFlow()
@@ -28,8 +26,6 @@ class LbsService: BleServiceBase {
             gatt: BluetoothGatt,
             service: BluetoothGattService
         ): Boolean {
-            bleGatt = gatt
-
             // Notify有効
             val buttonChas = Utils.getCharacteristic(service, BUTTON_CHARACTERISTIC_UUID)
             Utils.writeDescriptor(
@@ -71,10 +67,12 @@ class LbsService: BleServiceBase {
 
     fun setLed(onoff: Boolean) {
         Log.d(TAG, "setLed: $onoff")
-        val service = Utils.getService(bleGatt, SERVICE_UUID)
-        val chars = Utils.getCharacteristic(service, LED_CHARACTERISTIC_UUID)
-        val data = byteArrayOf(if (onoff) 1 else 0)
-        Utils.writeCharacteristic(bleGatt, chars, data)
+        bleConnect.bleGatt?.let { gatt ->
+            val service = Utils.getService(gatt, SERVICE_UUID)
+            val chars = Utils.getCharacteristic(service, LED_CHARACTERISTIC_UUID)
+            val data = byteArrayOf(if (onoff) 1 else 0)
+            Utils.writeCharacteristic(gatt, chars, data)
+        }
     }
 
     // https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/bluetooth_services/services/lbs.html
