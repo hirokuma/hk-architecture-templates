@@ -119,10 +119,8 @@ fun ScanScreen(
                 deviceList = uiState.deviceList,
                 modifier = Modifier.padding(innerPadding),
                 scanning = uiState.scanning,
-                onItemClicked = {device ->
-                    viewModel.viewModelScope.launch(Dispatchers.IO) {
-                        viewModel.connectDevice(device)
-                    }
+                onItemClicked = {dev ->
+                    viewModel.connectDevice(dev)
                 },
             )
         }

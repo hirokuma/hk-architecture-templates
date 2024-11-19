@@ -98,19 +98,21 @@ class BleViewModel(
         return true
     }
 
-    suspend fun connectDevice(device: BleDevice) {
-        bleConn.connectDevice(device).collect {
-            if (it) {
-                _uiState.update { state ->
-                    state.copy(
-                        selectedDevice = device,
-                    )
-                }
-            } else {
-                _uiState.update { state ->
-                    state.copy(
-                        selectedDevice = null,
-                    )
+    fun connectDevice(device: BleDevice) {
+        viewModelScope.launch(Dispatchers.IO) {
+            bleConn.connectDevice(device).collect {
+                if (it) {
+                    _uiState.update { state ->
+                        state.copy(
+                            selectedDevice = device,
+                        )
+                    }
+                } else {
+                    _uiState.update { state ->
+                        state.copy(
+                            selectedDevice = null,
+                        )
+                    }
                 }
             }
         }
